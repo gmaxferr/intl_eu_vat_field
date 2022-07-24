@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 
 import './countries.dart';
-import './phone_number.dart';
+import 'vat_number.dart';
 
 class IntlPhoneField extends StatefulWidget {
   /// Whether to hide the text being edited (e.g., for passwords).
@@ -22,7 +22,7 @@ class IntlPhoneField extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.readOnly}
   final bool readOnly;
-  final FormFieldSetter<PhoneNumber>? onSaved;
+  final FormFieldSetter<VATNumber>? onSaved;
 
   /// {@macro flutter.widgets.editableText.onChanged}
   ///
@@ -32,20 +32,20 @@ class IntlPhoneField extends StatefulWidget {
   ///    runs and can validate and change ("format") the input value.
   ///  * [onEditingComplete], [onSubmitted], [onSelectionChanged]:
   ///    which are more specialized input change notifications.
-  final ValueChanged<PhoneNumber>? onChanged;
+  final ValueChanged<VATNumber>? onChanged;
 
   final ValueChanged<Country>? onCountryChanged;
 
   /// An optional method that validates an input. Returns an error string to display if the input is invalid, or null otherwise.
   ///
-  /// A [PhoneNumber] is passed to the validator as argument.
+  /// A [VATNumber] is passed to the validator as argument.
   /// The validator can handle asynchronous validation when declared as a [Future].
   /// Or run synchronously when declared as a [Function].
   ///
   /// By default, the validator checks whether the input number length is between selected country's phone numbers min and max length.
   /// If `disableLengthCheck` is not set to `true`, your validator returned value will be overwritten by the default validator.
   /// But, if `disableLengthCheck` is set to `true`, your validator will have to check phone number length itself.
-  final FutureOr<String?> Function(PhoneNumber?)? validator;
+  final FutureOr<String?> Function(VATNumber?)? validator;
 
   /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
@@ -296,31 +296,30 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     _countryList = widget.countries == null
         ? countries
         : countries
-            .where((country) => widget.countries!.contains(country.code))
+            .where((country) => widget.countries!.contains(country.prefixCode))
             .toList();
     filteredCountries = _countryList;
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
       number = number.substring(1);
       // parse initial value
-      _selectedCountry = countries.firstWhere(
-          (country) => number.startsWith(country.dialCode),
-          orElse: () => _countryList.first);
-      number = number.substring(_selectedCountry.dialCode.length);
+      _selectedCountry = Country.from(number) ?? countries.first;
+      number = number
+          .replaceAll(_selectedCountry.prefixCode, '')
+          .replaceAll(_selectedCountry.sufixCode, '');
     } else {
       _selectedCountry = _countryList.firstWhere(
-          (item) => item.code == (widget.initialCountryCode ?? 'US'),
+          (item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'),
           orElse: () => _countryList.first);
     }
 
     if (widget.autovalidateMode == AutovalidateMode.always) {
-      final initialPhoneNumber = PhoneNumber(
-        countryISOCode: _selectedCountry.code,
-        countryCode: '+${_selectedCountry.dialCode}',
+      final initialVATNumber = VATNumber(
+        countryCode: '${_selectedCountry.name}',
         number: widget.initialValue ?? '',
       );
 
-      final value = widget.validator?.call(initialPhoneNumber);
+      final value = widget.validator?.call(initialVATNumber);
 
       if (value is String) {
         validatorMessage = value;
@@ -338,7 +337,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       context: context,
       useRootNavigator: false,
       builder: (context) => StatefulBuilder(
-        builder: (ctx, setState) => CountryPickerDialog(
+        builder: (ctx, setState) => VATPickerDialog(
           style: widget.pickerDialogStyle,
           filteredCountries: filteredCountries,
           searchText: widget.searchText,
@@ -374,30 +373,34 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       onFieldSubmitted: widget.onSubmitted,
       decoration: widget.decoration.copyWith(
         prefixIcon: _buildFlagsButton(),
+        suffix: _selectedCountry.sufixCode.isEmpty
+            ? null
+            : Text(
+                _selectedCountry.sufixCode,
+                style: widget.dropdownTextStyle,
+              ),
         counterText: !widget.enabled ? '' : null,
       ),
       style: widget.style,
       onSaved: (value) {
         widget.onSaved?.call(
-          PhoneNumber(
-            countryISOCode: _selectedCountry.code,
-            countryCode: '+${_selectedCountry.dialCode}',
+          VATNumber(
+            countryCode: '${_selectedCountry.name}',
             number: value!,
           ),
         );
       },
       onChanged: (value) async {
-        final phoneNumber = PhoneNumber(
-          countryISOCode: _selectedCountry.code,
-          countryCode: '+${_selectedCountry.dialCode}',
+        final vatNumber = VATNumber(
+          countryCode: '+${_selectedCountry.name}',
           number: value,
         );
 
         if (widget.autovalidateMode != AutovalidateMode.disabled) {
-          validatorMessage = await widget.validator?.call(phoneNumber);
+          validatorMessage = await widget.validator?.call(vatNumber);
         }
 
-        widget.onChanged?.call(phoneNumber);
+        widget.onChanged?.call(vatNumber);
       },
       validator: (value) {
         if (!widget.disableLengthCheck && value != null) {
@@ -441,7 +444,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 ],
                 if (widget.showCountryFlag) ...[
                   Image.asset(
-                    'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
+                    'assets/flags/${_selectedCountry.flag.toLowerCase()}.png',
                     package: 'intl_phone_field',
                     width: 32,
                   ),
@@ -449,7 +452,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 ],
                 FittedBox(
                   child: Text(
-                    '+${_selectedCountry.dialCode}',
+                    '${_selectedCountry.name}  ${_selectedCountry.prefixCode}',
                     style: widget.dropdownTextStyle,
                   ),
                 ),

@@ -1,10 +1,8 @@
-class PhoneNumber {
-  String countryISOCode;
+class VATNumber {
   String countryCode;
   String number;
 
-  PhoneNumber({
-    required this.countryISOCode,
+  VATNumber({
     required this.countryCode,
     required this.number,
   });
@@ -14,5 +12,5 @@ class PhoneNumber {
   }
 
   String toString() =>
-      'PhoneNumber(countryISOCode: $countryISOCode, countryCode: $countryCode, number: $number)';
+      'VAT(countryCode: $countryCode, number: $number)';
 }

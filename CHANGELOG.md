@@ -17,7 +17,7 @@
 - Move flag button to TextFormField's `prefixIcon` (always displayed and get rid of alignment issues).
 - Add `dropdownTextStyle`, customize style use for the country dial code.
 - Add `disableLengthCheck`, disable view minimum and maximum length check.
-- Add a CountryPickerDialog widget and PickerDialogStyle (set of styles to allow the country search dialog customization).
+- Add a VATPickerDialog widget and PickerDialogStyle (set of styles to allow the country search dialog customization).
 - Add `flagsButtonPadding`, set custom padding around flag button.
 - Add `invalidNumberMessage`, te message to be displayed on validation error.
 - Add cursor customization options: `cursorColor`, `cursorHeight`, `cursorRadius`, `cursorWidth` and `showCursor`.

@@ -434,6 +434,51 @@ class Country {
   }
 }
 
+void main() {
+  List<String> vats = [
+    "ESX12345678",
+    "ESX1234567X",
+    "ES01234567X",
+    "CHE123456789IVA",
+    "CHE123456789TVA",
+    "CHE123456789MWST",
+    "ATU12345678",
+    "BE1234567890",
+    "CZ1234567890",
+    "FRXX123456789",
+    "PT268594376",
+    "NL123456789B01",
+    "NL123456789BO2",
+    "123456789MVA",
+    "IE1234567WA",
+    "IE1234567FA",
+    "FR12345678901",
+    "FRX1234567890",
+    "FR1X123456789",
+    "FRXX123456789",
+    "CZ12345678",
+    "CZ123456789",
+    "CZ1234567890",
+    "CY12345678X",
+    "HR12345678901",
+    "BG123456789",
+    "BG1234567890",
+    "BE1234567890",
+    "BE0123456789",
+    "ATU12345678",
+    "MT12345678",
+  ];
+  vats.forEach((vat) {
+    Country? c = Country.from(vat);
+    if (c == null) {
+      print("COULD NOT FIND COUNTRY FOR >> '$vat'");
+      return;
+    }
+    print(
+        "${c.name}\t\t| VALID=${c.validationFunction == null ? "NaN" : c.validationFunction!(c.extractContentVAT(vat))}");
+  });
+}
+
 bool modValidation(String nifStr) {
   List<int> nif = convertStringToListInt(nifStr);
   if (nif.length == 9) {

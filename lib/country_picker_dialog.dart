@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:intl_phone_field/helpers.dart';
 
 class PickerDialogStyle {
   final Color? backgroundColor;
@@ -37,7 +36,7 @@ class PickerDialogStyle {
   });
 }
 
-class CountryPickerDialog extends StatefulWidget {
+class VATPickerDialog extends StatefulWidget {
   final List<Country> countryList;
   final Country selectedCountry;
   final ValueChanged<Country> onCountryChanged;
@@ -45,7 +44,7 @@ class CountryPickerDialog extends StatefulWidget {
   final List<Country> filteredCountries;
   final PickerDialogStyle? style;
 
-  CountryPickerDialog({
+  VATPickerDialog({
     Key? key,
     required this.searchText,
     required this.countryList,
@@ -56,10 +55,10 @@ class CountryPickerDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CountryPickerDialogState createState() => _CountryPickerDialogState();
+  _VATPickerDialogState createState() => _VATPickerDialogState();
 }
 
-class _CountryPickerDialogState extends State<CountryPickerDialog> {
+class _VATPickerDialogState extends State<VATPickerDialog> {
   late List<Country> _filteredCountries;
   late Country _selectedCountry;
 
@@ -98,11 +97,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                       labelText: widget.searchText,
                     ),
                 onChanged: (value) {
-                  _filteredCountries = isNumeric(value)
-                      ? widget.countryList
-                          .where((country) => country.dialCode.contains(value))
-                          .toList()
-                      : widget.countryList
+                  _filteredCountries = widget.countryList
                           .where((country) => country.name
                               .toLowerCase()
                               .contains(value.toLowerCase()))
@@ -120,7 +115,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                   children: <Widget>[
                     ListTile(
                       leading: Image.asset(
-                        'assets/flags/${_filteredCountries[index].code.toLowerCase()}.png',
+                        'assets/flags/${_filteredCountries[index].flag.toLowerCase()}.png',
                         package: 'intl_phone_field',
                         width: 32,
                       ),
@@ -131,7 +126,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                             TextStyle(fontWeight: FontWeight.w700),
                       ),
                       trailing: Text(
-                        '+${_filteredCountries[index].dialCode}',
+                        '${_filteredCountries[index].prefixCode}....${_filteredCountries[index].sufixCode}',
                         style: widget.style?.countryCodeStyle ??
                             TextStyle(fontWeight: FontWeight.w700),
                       ),
