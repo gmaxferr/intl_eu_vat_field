@@ -330,6 +330,7 @@ final List<Country> countries = [
     name: "Switzerland (German)",
     flag: "CH",
     prefixCode: "CHE",
+    shortenedName: "(German)",
     sufixCode: "MWST",
     validationFunction: (vat) {
       return int.tryParse(vat) != null;
@@ -341,6 +342,7 @@ final List<Country> countries = [
     name: "Switzerland (French)",
     flag: "CH",
     prefixCode: "CHE",
+    shortenedName: "(French)",
     sufixCode: "TVA",
     validationFunction: (vat) {
       return int.tryParse(vat) != null;
@@ -351,6 +353,7 @@ final List<Country> countries = [
   Country(
     name: "Switzerland (Italian)",
     flag: "CH",
+    shortenedName: "(Italian)",
     prefixCode: "CHE",
     sufixCode: "IVA",
     validationFunction: (vat) {
@@ -374,6 +377,7 @@ final List<Country> countries = [
 class Country {
   final String name;
   final String flag;
+  final String shortenedName;
   final String prefixCode;
   final String sufixCode;
   final bool Function(String contentValue)? validationFunction;
@@ -385,6 +389,7 @@ class Country {
     required this.flag,
     required this.prefixCode,
     this.sufixCode = "",
+    this.shortenedName="",
     required this.minLength,
     required this.maxLength,
     this.validationFunction,

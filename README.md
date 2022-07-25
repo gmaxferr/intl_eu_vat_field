@@ -2,13 +2,13 @@
 
 ![Pub](https://img.shields.io/pub/v/intl_eu_vat_field)
 
-A customised Flutter TextFormField to input international phone number along with country code.
+A customised Flutter TextFormField to input european VAT numbers validated according to EU Guidelines.
 
-This widget can be used to make customised text field to take phone number input for any country along with an option to choose country code from a dropdown.
+This widget can be used to make customised text field to take vat number input for any EU country along with an option to choose country code from a dropdown.
 
 ## Screenshots
 
-<img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/1.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/2.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/3.png?raw=true" height="500px">
+<img src="https://github.com/gmaxferr/intl_eu_vat_field/blob/master/1.png?raw=true" height="500px"> <img src="https://github.com/gmaxferr/intl_eu_vat_field/blob/master/2.png?raw=true" height="500px"> <img src="https://github.com/gmaxferr/intl_eu_vat_field/blob/master/3.png?raw=true" height="500px">
 
 ## Installing
 
@@ -24,7 +24,7 @@ Or, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  intl_eu_vat_field: ^3.1.0
+  intl_eu_vat_field: ^1.0.2
 ```
 
 ## How to Use
@@ -34,12 +34,12 @@ Simply create a `IntlVatNumberField` widget, and pass the required params:
 ```dart
 IntlVatNumberField(
     decoration: InputDecoration(
-        labelText: 'Phone Number',
+        labelText: 'VAT Number',
         border: OutlineInputBorder(
             borderSide: BorderSide(),
         ),
     ),
-    initialCountryCode: 'IN',
+    initialCountryCode: 'PT',
     onChanged: (phone) {
         print(phone.completeNumber);
     },
@@ -64,8 +64,7 @@ Comment on Issue or Pull Request, asking @all-contributors to add a contributor:
 
 ## CONTRIBUTORS
 
-- [Vansh Goel](https://github.com/vanshg395/)
-- [Alex N'Guessan](https://github.com/marcaureln/)
+- [Guilherme Ferreira](https://github.com/gmaxferr/)
 
 ## LICENSE
 

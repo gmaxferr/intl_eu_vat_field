@@ -126,7 +126,7 @@ class IntlVatNumberField extends StatefulWidget {
 
   /// 2 Letter ISO Code
   final String? initialCountryCode;
- 
+
   /// The decoration to show around the text field.
   ///
   /// By default, draws a horizontal line under the text field but can be
@@ -187,6 +187,11 @@ class IntlVatNumberField extends StatefulWidget {
   ///
   /// Default value is `true`.
   final bool showCountryFlag;
+
+  /// Whether to show complete Country name or a shorter version.
+  ///
+  /// Default value is `false`.
+  final bool showShorterCountryName;
 
   /// Message to be displayed on autoValidate error
   ///
@@ -249,6 +254,7 @@ class IntlVatNumberField extends StatefulWidget {
     this.onChanged,
     this.onCountryChanged,
     this.onSaved,
+    this.showShorterCountryName = false,
     this.showDropdownIcon = true,
     this.dropdownDecoration = const BoxDecoration(),
     this.inputFormatters,
@@ -456,7 +462,9 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
                 ],
                 FittedBox(
                   child: Text(
-                    '${_selectedCountry.name}  ${_selectedCountry.prefixCode}',
+                    widget.showShorterCountryName
+                        ? '${_selectedCountry.shortenedName}  ${_selectedCountry.prefixCode}'
+                        : '${_selectedCountry.name}  ${_selectedCountry.prefixCode}',
                     style: widget.dropdownTextStyle,
                   ),
                 ),
