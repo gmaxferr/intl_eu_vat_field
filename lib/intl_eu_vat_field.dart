@@ -126,10 +126,7 @@ class IntlVatNumberField extends StatefulWidget {
 
   /// 2 Letter ISO Code
   final String? initialCountryCode;
-
-  /// List of 2 Letter ISO Codes of countries to show. Defaults to showing the inbuilt list of all countries.
-  final List<String>? countries;
-
+ 
   /// The decoration to show around the text field.
   ///
   /// By default, draws a horizontal line under the text field but can be
@@ -250,7 +247,6 @@ class IntlVatNumberField extends StatefulWidget {
     this.onSubmitted,
     this.validator,
     this.onChanged,
-    this.countries,
     this.onCountryChanged,
     this.onSaved,
     this.showDropdownIcon = true,
@@ -292,11 +288,9 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
   @override
   void initState() {
     super.initState();
-    _countryList = widget.countries == null ? countries : countries.where((country) => widget.countries!.contains(country.prefixCode)).toList();
-    filteredCountries = _countryList;
+    _countryList = countries;
     number = widget.initialValue ?? '';
-    if (widget.initialCountryCode == null && number.startsWith('+')) {
-      number = number.substring(1);
+    if (widget.initialCountryCode == null && widget.initialValue != null) {
       // parse initial value
       _selectedCountry = Country.from(number) ?? countries.first;
       number = number.replaceAll(_selectedCountry.prefixCode, '').replaceAll(_selectedCountry.sufixCode, '');

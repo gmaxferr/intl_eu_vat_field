@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
                     border: OutlineInputBorder(
                       borderSide: BorderSide(),
                     ),
-                  ),
+                  ),initialValue: "CHE123456789MWST",
                   onChanged: (phone) {
                     print(phone.completeNumber);
                   },

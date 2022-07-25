@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-List<Country> countries = [
+final List<Country> countries = [
   Country(
     name: "Austria",
     flag: "AT",
