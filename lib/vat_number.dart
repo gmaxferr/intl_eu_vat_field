@@ -1,16 +1,17 @@
+import 'package:intl_eu_vat_field/countries.dart';
+
 class VATNumber {
-  String countryCode;
+  Country country;
   String number;
 
   VATNumber({
-    required this.countryCode,
+    required this.country,
     required this.number,
   });
 
   String get completeNumber {
-    return countryCode + number;
+    return country.prefixCode + number + country.sufixCode;
   }
 
-  String toString() =>
-      'VAT(countryCode: $countryCode, number: $number)';
+  String toString() => 'VAT(country: Country[${country.name}], number: $number)';
 }

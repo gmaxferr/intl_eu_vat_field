@@ -1,4 +1,4 @@
-name: intl_phone_field_example
+name: intl_eu_vat_field_example
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.3
-  intl_phone_field:
+  intl_eu_vat_field:
     path: ../
 
 dev_dependencies:

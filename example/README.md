@@ -1,4 +1,4 @@
-# intl_phone_field_example
+# intl_eu_vat_field_example
 
 A new Flutter project.
 

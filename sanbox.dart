@@ -468,6 +468,8 @@ void main() {
     "ATU12345678",
     "MT12345678",
   ];
+
+  
   vats.forEach((vat) {
     Country? c = Country.from(vat);
     if (c == null) {

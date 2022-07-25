@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_eu_vat_field.dart';
+import 'package:intl_eu_vat_field/intl_eu_vat_field.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 30),
-                IntlPhoneField(
+                IntlVatNumberField(
                   decoration: InputDecoration(
                     labelText: 'VAT Number',
                     border: OutlineInputBorder(

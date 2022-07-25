@@ -1,6 +1,6 @@
 # International Phone Field Package
 
-![Pub](https://img.shields.io/pub/v/intl_phone_field)
+![Pub](https://img.shields.io/pub/v/intl_eu_vat_field)
 
 A customised Flutter TextFormField to input international phone number along with country code.
 
@@ -8,7 +8,7 @@ This widget can be used to make customised text field to take phone number input
 
 ## Screenshots
 
-<img src="https://github.com/vanshg395/intl_phone_field/blob/master/1.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_phone_field/blob/master/2.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_phone_field/blob/master/3.png?raw=true" height="500px">
+<img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/1.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/2.png?raw=true" height="500px"> <img src="https://github.com/vanshg395/intl_eu_vat_field/blob/master/3.png?raw=true" height="500px">
 
 ## Installing
 
@@ -17,22 +17,22 @@ To use this package:
 Run this command:
 
 ```yaml
-flutter pub add intl_phone_field
+flutter pub add intl_eu_vat_field
 ```
 
 Or, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  intl_phone_field: ^3.1.0
+  intl_eu_vat_field: ^3.1.0
 ```
 
 ## How to Use
 
-Simply create a `IntlPhoneField` widget, and pass the required params:
+Simply create a `IntlVatNumberField` widget, and pass the required params:
 
 ```dart
-IntlPhoneField(
+IntlVatNumberField(
     decoration: InputDecoration(
         labelText: 'Phone Number',
         border: OutlineInputBorder(

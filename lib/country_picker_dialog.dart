@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/countries.dart';
+import 'package:intl_eu_vat_field/countries.dart';
 
 class PickerDialogStyle {
   final Color? backgroundColor;
@@ -116,7 +116,7 @@ class _VATPickerDialogState extends State<VATPickerDialog> {
                     ListTile(
                       leading: Image.asset(
                         'assets/flags/${_filteredCountries[index].flag.toLowerCase()}.png',
-                        package: 'intl_phone_field',
+                        package: 'intl_eu_vat_field',
                         width: 32,
                       ),
                       contentPadding: widget.style?.listTilePadding,

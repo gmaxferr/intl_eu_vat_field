@@ -1,15 +1,15 @@
-library intl_phone_field;
+library intl_eu_vat_field;
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl_phone_field/country_picker_dialog.dart';
+import 'package:intl_eu_vat_field/country_picker_dialog.dart';
 
 import './countries.dart';
 import 'vat_number.dart';
 
-class IntlPhoneField extends StatefulWidget {
+class IntlVatNumberField extends StatefulWidget {
   /// Whether to hide the text being edited (e.g., for passwords).
   final bool obscureText;
 
@@ -42,9 +42,9 @@ class IntlPhoneField extends StatefulWidget {
   /// The validator can handle asynchronous validation when declared as a [Future].
   /// Or run synchronously when declared as a [Function].
   ///
-  /// By default, the validator checks whether the input number length is between selected country's phone numbers min and max length.
+  /// By default, the validator checks whether the input number length is between selected country's vatnumber numbers min and max length.
   /// If `disableLengthCheck` is not set to `true`, your validator returned value will be overwritten by the default validator.
-  /// But, if `disableLengthCheck` is set to `true`, your validator will have to check phone number length itself.
+  /// But, if `disableLengthCheck` is set to `true`, your validator will have to check vatnumber number length itself.
   final FutureOr<String?> Function(VATNumber?)? validator;
 
   /// {@macro flutter.widgets.editableText.keyboardType}
@@ -232,7 +232,7 @@ class IntlPhoneField extends StatefulWidget {
   /// If unset, defaults to [EdgeInsets.zero].
   final EdgeInsets flagsButtonMargin;
 
-  IntlPhoneField({
+  IntlVatNumberField({
     Key? key,
     this.initialCountryCode,
     this.obscureText = false,
@@ -241,7 +241,7 @@ class IntlPhoneField extends StatefulWidget {
     this.onTap,
     this.readOnly = false,
     this.initialValue,
-    this.keyboardType = TextInputType.phone,
+    this.keyboardType = TextInputType.text,
     this.controller,
     this.focusNode,
     this.decoration = const InputDecoration(),
@@ -258,8 +258,7 @@ class IntlPhoneField extends StatefulWidget {
     this.inputFormatters,
     this.enabled = true,
     this.keyboardAppearance,
-    @Deprecated('Use searchFieldInputDecoration of PickerDialogStyle instead')
-        this.searchText = 'Search country',
+    @Deprecated('Use searchFieldInputDecoration of PickerDialogStyle instead') this.searchText = 'Search country',
     this.dropdownIconPosition = IconPosition.leading,
     this.dropdownIcon = const Icon(Icons.arrow_drop_down),
     this.autofocus = false,
@@ -269,7 +268,7 @@ class IntlPhoneField extends StatefulWidget {
     this.cursorColor,
     this.disableLengthCheck = false,
     this.flagsButtonPadding = EdgeInsets.zero,
-    this.invalidNumberMessage = 'Invalid Mobile Number',
+    this.invalidNumberMessage = 'Invalid VAT Number',
     this.cursorHeight,
     this.cursorRadius = Radius.zero,
     this.cursorWidth = 2.0,
@@ -279,10 +278,10 @@ class IntlPhoneField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _IntlPhoneFieldState createState() => _IntlPhoneFieldState();
+  _IntlVatNumberFieldState createState() => _IntlVatNumberFieldState();
 }
 
-class _IntlPhoneFieldState extends State<IntlPhoneField> {
+class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
   late List<Country> _countryList;
   late Country _selectedCountry;
   late List<Country> filteredCountries;
@@ -293,29 +292,21 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
   @override
   void initState() {
     super.initState();
-    _countryList = widget.countries == null
-        ? countries
-        : countries
-            .where((country) => widget.countries!.contains(country.prefixCode))
-            .toList();
+    _countryList = widget.countries == null ? countries : countries.where((country) => widget.countries!.contains(country.prefixCode)).toList();
     filteredCountries = _countryList;
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
       number = number.substring(1);
       // parse initial value
       _selectedCountry = Country.from(number) ?? countries.first;
-      number = number
-          .replaceAll(_selectedCountry.prefixCode, '')
-          .replaceAll(_selectedCountry.sufixCode, '');
+      number = number.replaceAll(_selectedCountry.prefixCode, '').replaceAll(_selectedCountry.sufixCode, '');
     } else {
-      _selectedCountry = _countryList.firstWhere(
-          (item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'),
-          orElse: () => _countryList.first);
+      _selectedCountry = _countryList.firstWhere((item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'), orElse: () => _countryList.first);
     }
 
     if (widget.autovalidateMode == AutovalidateMode.always) {
       final initialVATNumber = VATNumber(
-        countryCode: '${_selectedCountry.name}',
+        country: _selectedCountry,
         number: widget.initialValue ?? '',
       );
 
@@ -345,6 +336,9 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
           selectedCountry: _selectedCountry,
           onCountryChanged: (Country country) {
             _selectedCountry = country;
+            final newVAT = VATNumber(country: country, number: number);
+            _validateNewVat(country, newVAT);
+            widget.onChanged?.call(newVAT);
             widget.onCountryChanged?.call(country);
             setState(() {});
           },
@@ -385,29 +379,30 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       onSaved: (value) {
         widget.onSaved?.call(
           VATNumber(
-            countryCode: '${_selectedCountry.name}',
+            country: _selectedCountry,
             number: value!,
           ),
         );
       },
       onChanged: (value) async {
+        number = value;
         final vatNumber = VATNumber(
-          countryCode: '+${_selectedCountry.name}',
+          country: _selectedCountry,
           number: value,
         );
 
-        if (widget.autovalidateMode != AutovalidateMode.disabled) {
-          validatorMessage = await widget.validator?.call(vatNumber);
-        }
+        _validateNewVat(_selectedCountry, vatNumber);
 
         widget.onChanged?.call(vatNumber);
       },
       validator: (value) {
+        bool validLength = true;
         if (!widget.disableLengthCheck && value != null) {
-          return value.length >= _selectedCountry.minLength &&
-                  value.length <= _selectedCountry.maxLength
-              ? null
-              : widget.invalidNumberMessage;
+          validLength = value.length >= _selectedCountry.minLength && value.length <= _selectedCountry.maxLength;
+        }
+
+        if (!validLength) {
+          return widget.invalidNumberMessage;
         }
 
         return validatorMessage;
@@ -423,6 +418,23 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     );
   }
 
+  _validateNewVat(Country country, VATNumber vatNumber) async {
+    if (widget.autovalidateMode != AutovalidateMode.disabled) {
+      if (widget.validator == null && _selectedCountry.validationFunction != null) {
+        bool valid = _selectedCountry.validationFunction!(_selectedCountry.extractContentVAT(vatNumber.number));
+        print(
+            "Attempt => '${_selectedCountry.extractContentVAT(vatNumber.number)}' | ${valid ? "VALID" : "INVALID"}\n  > completeNumber: ${vatNumber.completeNumber} | countryCode: ${vatNumber.country.name} | number: ${vatNumber.number}");
+        if (!valid) {
+          validatorMessage = widget.invalidNumberMessage;
+        } else {
+          validatorMessage = null;
+        }
+      } else {
+        validatorMessage = await widget.validator?.call(vatNumber);
+      }
+    }
+  }
+
   Container _buildFlagsButton() {
     return Container(
       margin: widget.flagsButtonMargin,
@@ -436,16 +448,14 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                if (widget.enabled &&
-                    widget.showDropdownIcon &&
-                    widget.dropdownIconPosition == IconPosition.leading) ...[
+                if (widget.enabled && widget.showDropdownIcon && widget.dropdownIconPosition == IconPosition.leading) ...[
                   widget.dropdownIcon,
                   SizedBox(width: 4),
                 ],
                 if (widget.showCountryFlag) ...[
                   Image.asset(
                     'assets/flags/${_selectedCountry.flag.toLowerCase()}.png',
-                    package: 'intl_phone_field',
+                    package: 'intl_eu_vat_field',
                     width: 32,
                   ),
                   SizedBox(width: 8),
@@ -456,9 +466,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                     style: widget.dropdownTextStyle,
                   ),
                 ),
-                if (widget.enabled &&
-                    widget.showDropdownIcon &&
-                    widget.dropdownIconPosition == IconPosition.trailing) ...[
+                if (widget.enabled && widget.showDropdownIcon && widget.dropdownIconPosition == IconPosition.trailing) ...[
                   SizedBox(width: 4),
                   widget.dropdownIcon,
                 ],
