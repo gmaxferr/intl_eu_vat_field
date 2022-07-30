@@ -298,7 +298,7 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && widget.initialValue != null) {
       // parse initial value
-      _selectedCountry = Country.from(number) ?? countries.first;
+      _selectedCountry = Country.from(number) ?? countries.firstWhere((c) => c.name == "Malta", orElse: () => countries.first);
       number = number.replaceAll(_selectedCountry.prefixCode, '').replaceAll(_selectedCountry.sufixCode, '');
     } else {
       _selectedCountry = _countryList.firstWhere((item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'), orElse: () => _countryList.first);

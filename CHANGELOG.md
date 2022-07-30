@@ -1,4 +1,8 @@
 
+## [1.0.3] - Improvement
+
+- Added Malta as default option
+
 ## [1.0.2] - Improvement
 
 - Added option to shorten name to displayed information.

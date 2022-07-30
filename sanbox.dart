@@ -436,6 +436,7 @@ class Country {
 
 void main() {
   List<String> vats = [
+    "1111111",
     "ESX12345678",
     "ESX1234567X",
     "ES01234567X",
