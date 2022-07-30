@@ -1,4 +1,7 @@
 
+## [1.0.4] - Improvement
+
+- Added initial Value validation
 ## [1.0.3] - Improvement
 
 - Added Malta as default option

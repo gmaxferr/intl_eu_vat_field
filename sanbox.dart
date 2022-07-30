@@ -6,7 +6,7 @@ List<Country> countries = [
     flag: "AT",
     prefixCode: "AT",
     validationFunction: (vat) {
-      if(vat[0] != "U") return false;
+      if (vat[0] != "U") return false;
       return int.tryParse(vat.substring(1, vat.length)) != null;
     },
     minLength: 9,
@@ -48,12 +48,9 @@ List<Country> countries = [
     prefixCode: "CY",
     // Last must be a letter
     validationFunction: (vat) {
-      bool lastIsLetter = !vat
-          .substring(vat.length - 1, vat.length)
-          .toUpperCase()
-          .contains(r'[0-9]');
-          
-        return lastIsLetter && int.tryParse(vat.substring(0, vat.length - 1)) != null;
+      bool lastIsLetter = !vat.substring(vat.length - 1, vat.length).toUpperCase().contains(r'[0-9]');
+
+      return lastIsLetter && int.tryParse(vat.substring(0, vat.length - 1)) != null;
     },
     minLength: 9,
     maxLength: 9,
@@ -108,13 +105,9 @@ List<Country> countries = [
       maxLength: 11,
       validationFunction: (vat) {
         if (vat.contains("O") || vat.contains("I")) return false;
-        bool firstIsLetter =
-            !vat.substring(0, 1).toUpperCase().contains(r'[0-9]');
+        bool firstIsLetter = !vat.substring(0, 1).toUpperCase().contains(r'[0-9]');
         if (firstIsLetter) return true;
-        bool lastIsLetter = !vat
-            .substring(vat.length - 1, vat.length)
-            .toUpperCase()
-            .contains(r'[0-9]');
+        bool lastIsLetter = !vat.substring(vat.length - 1, vat.length).toUpperCase().contains(r'[0-9]');
 
         return lastIsLetter;
       }),
@@ -154,15 +147,9 @@ List<Country> countries = [
     prefixCode: "IE",
     // last 2 can be letters. At least one letter
     validationFunction: (vat) {
-      bool lastIsLetter = !vat
-          .substring(vat.length - 1, vat.length)
-          .toUpperCase()
-          .contains(r'[0-9]');
+      bool lastIsLetter = !vat.substring(vat.length - 1, vat.length).toUpperCase().contains(r'[0-9]');
       if (lastIsLetter) return true;
-      bool secondLastIsLetter = !vat
-          .substring(vat.length - 2, vat.length - 1)
-          .toUpperCase()
-          .contains(r'[0-9]');
+      bool secondLastIsLetter = !vat.substring(vat.length - 2, vat.length - 1).toUpperCase().contains(r'[0-9]');
       return secondLastIsLetter;
     },
     minLength: 8,
@@ -226,8 +213,7 @@ List<Country> countries = [
     // Can end with BO2
     validationFunction: (vat) {
       bool containsBatPos10 = vat[9] == "B";
-      bool containsOorNumberAtPos11 =
-          vat[10] == "O" || int.tryParse(vat[10]) != null;
+      bool containsOorNumberAtPos11 = vat[10] == "O" || int.tryParse(vat[10]) != null;
       return containsBatPos10 && containsOorNumberAtPos11;
     },
     minLength: 12,
@@ -304,13 +290,9 @@ List<Country> countries = [
     prefixCode: "ES",
     // first and/or last can be letters (must contain al least one)
     validationFunction: (vat) {
-      bool firstIsLetter =
-          !vat.substring(0, 1).toUpperCase().contains(r'[0-9]');
+      bool firstIsLetter = !vat.substring(0, 1).toUpperCase().contains(r'[0-9]');
       if (firstIsLetter) return true;
-      bool lastIsLetter = !vat
-          .substring(vat.length - 1, vat.length)
-          .toUpperCase()
-          .contains(r'[0-9]');
+      bool lastIsLetter = !vat.substring(vat.length - 1, vat.length).toUpperCase().contains(r'[0-9]');
       return lastIsLetter;
     },
     minLength: 9,
@@ -406,11 +388,7 @@ class Country {
       String suffix = vat.substring(vat.length - 3, vat.length);
       String suffix2 = vat.substring(vat.length - 4, vat.length);
       // print("    > Suffixes may be '$suffix' or '$suffix2'");
-      List<Country> possibilities = countries
-          .where((c) =>
-              c.prefixCode == 'CHE' &&
-              (c.sufixCode == suffix || c.sufixCode == suffix2))
-          .toList();
+      List<Country> possibilities = countries.where((c) => c.prefixCode == 'CHE' && (c.sufixCode == suffix || c.sufixCode == suffix2)).toList();
 
       // print(possibilities.isEmpty ? "    > None found" : "");
       return possibilities.isEmpty ? null : possibilities.first;
@@ -422,14 +400,11 @@ class Country {
     if (vat.substring(vat.length - 3, vat.length) == 'MVA') {
       String suffix = vat.substring(vat.length - 3, vat.length);
 
-      List<Country> possibilities = countries
-          .where((c) => c.prefixCode.isEmpty && c.sufixCode == suffix)
-          .toList();
+      List<Country> possibilities = countries.where((c) => c.prefixCode.isEmpty && c.sufixCode == suffix).toList();
       return possibilities.isEmpty ? null : possibilities.first;
     }
     // All the other
-    List<Country> possibilities =
-        countries.where((c) => c.prefixCode == prefix).toList();
+    List<Country> possibilities = countries.where((c) => c.prefixCode == prefix).toList();
     return possibilities.isEmpty ? null : possibilities.first;
   }
 }
@@ -470,15 +445,16 @@ void main() {
     "MT12345678",
   ];
 
-  
   vats.forEach((vat) {
     Country? c = Country.from(vat);
     if (c == null) {
       print("COULD NOT FIND COUNTRY FOR >> '$vat'");
-      return;
+      c = countries.firstWhere((element) => element.name== "Malta");
     }
-    print(
-        "${c.name}\t\t| VALID=${c.validationFunction == null ? "NaN" : c.validationFunction!(c.extractContentVAT(vat))}");
+    String str = c.extractContentVAT(vat);
+    print("$str.length = ${str.length} | min=${c.minLength} && max=${c.maxLength} | ${str.length >= c.minLength && str.length <= c.maxLength ? "OK" : "NOK"}");
+    bool valid = str.length >= c.minLength && str.length <= c.maxLength && c.validationFunction!(str);
+    print("${c.name}\t\t| $str | VALID=${c.validationFunction == null ? "NaN" : valid}");
   });
 }
 
@@ -486,14 +462,7 @@ bool modValidation(String nifStr) {
   List<int> nif = convertStringToListInt(nifStr);
   if (nif.length == 9) {
     // ignore special cases 4 and 7.
-    var added = ((nif[7] * 2) +
-        (nif[6] * 3) +
-        (nif[5] * 4) +
-        (nif[4] * 5) +
-        (nif[3] * 6) +
-        (nif[2] * 7) +
-        (nif[1] * 8) +
-        (nif[0] * 9));
+    var added = ((nif[7] * 2) + (nif[6] * 3) + (nif[5] * 4) + (nif[4] * 5) + (nif[3] * 6) + (nif[2] * 7) + (nif[1] * 8) + (nif[0] * 9));
     var mod = added % 11;
     var control;
     if (mod == 0 || mod == 1) {

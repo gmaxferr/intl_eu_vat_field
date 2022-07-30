@@ -303,23 +303,16 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     } else {
       _selectedCountry = _countryList.firstWhere((item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'), orElse: () => _countryList.first);
     }
-
-    if (widget.autovalidateMode == AutovalidateMode.always) {
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
       final initialVATNumber = VATNumber(
         country: _selectedCountry,
         number: widget.initialValue ?? '',
       );
 
-      final value = widget.validator?.call(initialVATNumber);
-
-      if (value is String) {
-        validatorMessage = value;
-      } else {
-        (value as Future).then((msg) {
-          validatorMessage = msg;
-        });
-      }
-    }
+      _validateNewVat(_selectedCountry, initialVATNumber);
+      widget.onChanged?.call(initialVATNumber);
+      setState(() {});
+    });
   }
 
   Future<void> _changeCountry() async {
@@ -348,9 +341,11 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     if (this.mounted) setState(() {});
   }
 
+  final _formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: _formKey,
       initialValue: (widget.controller == null) ? number : null,
       readOnly: widget.readOnly,
       obscureText: widget.obscureText,
@@ -367,6 +362,7 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
       onFieldSubmitted: widget.onSubmitted,
       decoration: widget.decoration.copyWith(
         prefixIcon: _buildFlagsButton(),
+        errorText: validatorMessage,
         suffix: _selectedCountry.sufixCode.isEmpty
             ? null
             : Text(
@@ -400,11 +396,18 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
         if (!widget.disableLengthCheck && value != null) {
           validLength = value.length >= _selectedCountry.minLength && value.length <= _selectedCountry.maxLength;
         }
-
         if (!validLength) {
-          return widget.invalidNumberMessage;
+          validatorMessage = widget.invalidNumberMessage;
+          return validatorMessage;
+        }
+        print(value);
+        if (value != null && value.isNotEmpty && !_selectedCountry.validationFunction!(value)) {
+          validatorMessage = widget.invalidNumberMessage;
+          return validatorMessage;
         }
 
+        validatorMessage = null;
+        Future.delayed(Duration(milliseconds: 300), () => setState(() {}));
         return validatorMessage;
       },
       maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,
@@ -418,10 +421,12 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     );
   }
 
-  _validateNewVat(Country country, VATNumber vatNumber) async {
+  void _validateNewVat(Country country, VATNumber vatNumber) async {
     if (widget.autovalidateMode != AutovalidateMode.disabled) {
       if (widget.validator == null && _selectedCountry.validationFunction != null) {
-        bool valid = _selectedCountry.validationFunction!(_selectedCountry.extractContentVAT(vatNumber.number));
+        String str = _selectedCountry.extractContentVAT(vatNumber.number);
+        bool valid =
+            str.length >= _selectedCountry.minLength && str.length <= _selectedCountry.maxLength && _selectedCountry.validationFunction!(str);
         print(
             "Attempt => '${_selectedCountry.extractContentVAT(vatNumber.number)}' | ${valid ? "VALID" : "INVALID"}\n  > completeNumber: ${vatNumber.completeNumber} | countryCode: ${vatNumber.country.name} | number: ${vatNumber.number}");
         if (!valid) {
