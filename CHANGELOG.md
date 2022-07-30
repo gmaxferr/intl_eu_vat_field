@@ -1,4 +1,8 @@
 
+## [1.0.5] - Fix
+
+- fix empty initial input
+
 ## [1.0.4] - Improvement
 
 - Added initial Value validation

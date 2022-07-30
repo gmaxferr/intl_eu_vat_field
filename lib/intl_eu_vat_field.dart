@@ -296,9 +296,13 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     super.initState();
     _countryList = countries;
     number = widget.initialValue ?? '';
-    if (widget.initialCountryCode == null && widget.initialValue != null) {
+    if (widget.initialCountryCode == null && widget.initialValue != null && widget.initialValue!.isNotEmpty) {
       // parse initial value
-      _selectedCountry = Country.from(number) ?? countries.firstWhere((c) => c.name == "Malta", orElse: () => countries.first);
+      Country? c;
+      try {
+        c = Country.from(number);
+      } catch (err) {}
+      _selectedCountry = c ?? countries.firstWhere((c) => c.name == "Malta", orElse: () => countries.first);
       number = number.replaceAll(_selectedCountry.prefixCode, '').replaceAll(_selectedCountry.sufixCode, '');
     } else {
       _selectedCountry = _countryList.firstWhere((item) => item.prefixCode == (widget.initialCountryCode ?? 'MT'), orElse: () => _countryList.first);
