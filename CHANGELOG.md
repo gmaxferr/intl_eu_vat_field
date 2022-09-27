@@ -1,4 +1,7 @@
 
+## [1.0.6] - Fix
+
+- fix setState when not mounted
 ## [1.0.5] - Fix
 
 - fix empty initial input

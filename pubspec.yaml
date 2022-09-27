@@ -1,7 +1,7 @@
 name: intl_eu_vat_field
 publish_to: http://buildmachine.sdem.efacec.com:4000
 description: A customised Flutter TextFormField to input international phone number along with country code.
-version: 1.0.5
+version: 1.0.6
 homepage: https://github.com/gmaxferr/intl_eu_vat_field
 
 environment:

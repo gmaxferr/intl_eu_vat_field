@@ -296,7 +296,7 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     super.initState();
     _countryList = countries;
     number = widget.initialValue ?? '';
-    if (widget.initialCountryCode == null && widget.initialValue != null && widget.initialValue!.isNotEmpty) {
+    if (widget.initialCountryCode == null && number.isNotEmpty) {
       // parse initial value
       Country? c;
       try {
@@ -314,8 +314,8 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
       );
 
       _validateNewVat(_selectedCountry, initialVATNumber);
-      widget.onChanged?.call(initialVATNumber);
-      setState(() {});
+      if(widget.onChanged != null) widget.onChanged!.call(initialVATNumber);
+      if(mounted) setState(() {});
     });
   }
 

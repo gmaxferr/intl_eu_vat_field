@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
                       borderSide: BorderSide(),
                     ),
                   ),
-                  initialValue: '',
+                  initialValue: null,
                   showShorterCountryName: true,
                   onChanged: (phone) {
                     print(phone.completeNumber);
