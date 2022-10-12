@@ -310,7 +310,7 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       final initialVATNumber = VATNumber(
         country: _selectedCountry,
-        number: widget.initialValue ?? '',
+        number: number,
       );
 
       _validateNewVat(_selectedCountry, initialVATNumber);
@@ -337,7 +337,7 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
             _validateNewVat(country, newVAT);
             widget.onChanged?.call(newVAT);
             widget.onCountryChanged?.call(country);
-            setState(() {});
+            if(mounted) setState(() {});
           },
         ),
       ),
@@ -404,14 +404,14 @@ class _IntlVatNumberFieldState extends State<IntlVatNumberField> {
           validatorMessage = widget.invalidNumberMessage;
           return validatorMessage;
         }
-        print(value);
+        // print(value);
         if (value != null && value.isNotEmpty && !_selectedCountry.validationFunction!(value)) {
           validatorMessage = widget.invalidNumberMessage;
           return validatorMessage;
         }
 
         validatorMessage = null;
-        Future.delayed(Duration(milliseconds: 300), () => setState(() {}));
+        Future.delayed(Duration(milliseconds: 300), () => !mounted ? 0 : setState(() {}));
         return validatorMessage;
       },
       maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,

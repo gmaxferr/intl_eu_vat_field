@@ -1,4 +1,9 @@
 
+## [1.1.0] - Fix
+
+- fix setState() called when widget not mounted
+- fix initialValue was appending 2 times the prefix/sufix
+
 ## [1.0.6] - Fix
 
 - fix setState when not mounted
